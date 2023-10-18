@@ -1,4 +1,3 @@
-import { ITestResult } from './../../front_dp/ts/test';
 const User = require("../models/User")
 const Test = require("../models/Test")
 const TestResult = require("../models/TestResult")
