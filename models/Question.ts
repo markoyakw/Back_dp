@@ -1,6 +1,6 @@
 import { model } from 'mongoose';
 import { Schema } from 'mongoose';
-import { IQuestion } from '../../shared/test';
+import { IQuestion } from '../types/test';
 
 const Question = new Schema<IQuestion>()
 

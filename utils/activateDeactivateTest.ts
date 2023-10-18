@@ -1,4 +1,4 @@
-import { ITest } from './../../shared/test';
+import { ITest } from '../types/test';
 import { Document } from 'mongoose';
 type ITestDocument = ITest & Document
 

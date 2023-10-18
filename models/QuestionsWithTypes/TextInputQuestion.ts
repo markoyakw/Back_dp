@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { ITextInputQuestion, QuestionTypes } from "../../../shared/test";
+import { ITextInputQuestion, QuestionTypes } from "../../types/test";
 import Question from "./../Question"
 
 const TextInputQuestionSchema = new Schema<ITextInputQuestion>({

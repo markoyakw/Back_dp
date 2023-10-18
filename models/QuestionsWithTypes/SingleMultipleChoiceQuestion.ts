@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IsingleMultipleChoiceQuestion, QuestionTypes } from "../../../shared/test";
+import { IsingleMultipleChoiceQuestion, QuestionTypes } from "../../types/test";
 import Question from "./../Question"
 
 const SingleMultipleCHoiceQuestionSchema = new Schema<IsingleMultipleChoiceQuestion>({

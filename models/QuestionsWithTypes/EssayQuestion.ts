@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IEssayQuestion, QuestionTypes } from "../../../shared/test";
+import { IEssayQuestion, QuestionTypes } from "../../types/test";
 import Question from "./../Question"
 
 const EssayQuestionSchema = new Schema<IEssayQuestion>({

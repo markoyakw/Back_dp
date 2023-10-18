@@ -4,7 +4,7 @@ import EssayQuestion from '../models/QuestionsWithTypes/EssayQuestion';
 import { FillTheGapsQuestion } from '../models/QuestionsWithTypes/FillTheGapsQuestion';
 import TrueOrFalseQuestion from '../models/QuestionsWithTypes/TrueOrFalseQuestion';
 import TextInputQuestion from '../models/QuestionsWithTypes/TextInputQuestion';
-import { IQuestion, QuestionTypes } from '../../shared/test';
+import { IQuestion, QuestionTypes } from '../types/test';
 import { Schema } from 'mongoose';
 
 const addQuestionAndGetId = async (question: IQuestion): Promise<Schema.Types.ObjectId> => {

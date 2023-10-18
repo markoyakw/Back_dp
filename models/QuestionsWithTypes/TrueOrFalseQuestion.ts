@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { ITrueOrFalseQuestion, QuestionTypes } from "../../../shared/test";
+import { ITrueOrFalseQuestion, QuestionTypes } from "../../types/test";
 import Question from "./../Question"
 
 const TrueOrFalseQuestionSchema = new Schema<ITrueOrFalseQuestion>({

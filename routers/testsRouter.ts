@@ -12,8 +12,7 @@ testsRouter.post("/deactivate", authMiddleware, testsController.deactivateTest)
 testsRouter.get("/getTested", authMiddleware, testsController.getTested)
 testsRouter.post("/testResult", authMiddleware, testsController.postTestResult)
 testsRouter.get("/testResultsByTestId", authMiddleware, testsController.testResultsByTestId)
-
-
+testsRouter.get("/check", testsController.check)
 // testsRouter.patch('/test', testsController.patchTest)
 // testsRouter.delete("/test", testsController.deleteTest)
 // testsRouter.get('/test/:id', testsController.getTest)

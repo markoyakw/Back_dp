@@ -1,4 +1,4 @@
-import { ITestResult } from '../../shared/test';
+import { ITestResult } from './../types/test';
 import { Schema, model } from 'mongoose';
 
 const TestResult = new Schema<ITestResult>({

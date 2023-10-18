@@ -1,6 +1,6 @@
 import { model } from 'mongoose';
 import { Schema } from 'mongoose';
-import { IUser } from '../../shared/test';
+import { IUser } from './../types/test';
 
 const User = new Schema<IUser>({
     login: { type: String, required: true },

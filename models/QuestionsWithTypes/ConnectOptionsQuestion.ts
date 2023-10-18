@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { IConnectOptionsAnswerPair, IConnectOptionsQuestion, QuestionTypes } from "../../../shared/test";
+import { IConnectOptionsAnswerPair, IConnectOptionsQuestion, QuestionTypes } from "../../types/test";
 import Question from "./../Question"
 
 const ConnectOptionsQuestionSchema = new Schema<IConnectOptionsQuestion>({

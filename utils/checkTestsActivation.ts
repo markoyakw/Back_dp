@@ -1,6 +1,6 @@
 import { activateTest, deactivateTest } from './activateDeactivateTest';
 import { Document, Model } from "mongoose";
-import { ITest } from "../../shared/test";
+import { ITest } from "../types/test";
 const Test = require("../models/Test") as Model<ITest>
 
 const now = Date.now()

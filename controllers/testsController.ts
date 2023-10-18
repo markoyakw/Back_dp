@@ -1,4 +1,4 @@
-import { IConnectOptionsQuestion, IFillTheGapsQuestion, IQuestion, ITest, ITestResult, ITextInputQuestion, ITrueOrFalseQuestion, IUser, IsingleMultipleChoiceAnswer, IsingleMultipleChoiceQuestion, QuestionTypes } from './../../shared/test';
+import { IConnectOptionsQuestion, IFillTheGapsQuestion, IQuestion, ITest, ITestResult, ITextInputQuestion, ITrueOrFalseQuestion, IUser, IsingleMultipleChoiceAnswer, IsingleMultipleChoiceQuestion, QuestionTypes } from '../types/test';
 const User = require("../models/User") as Model<IUser>
 const Test = require("../models/Test") as Model<ITest>
 const TestResult = require("../models/TestResult") as Model<ITestResult>
@@ -495,6 +495,9 @@ class testsController {
             console.error(e);
             res.status(400).json({ message: "Помилка пошуку результату тесту" });
         }
+    }
+    async check(req: Request, res: Response) {
+        return res.json({ test: "ok" })
     }
 
 }

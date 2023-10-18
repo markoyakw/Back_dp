@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IFillTheGapsFillAnswer, IFillTheGapsQuestion, QuestionTypes, IFillTheGapsTextAnswer } from "../../../shared/test";
+import { IFillTheGapsFillAnswer, IFillTheGapsQuestion, QuestionTypes, IFillTheGapsTextAnswer } from "../../types/test";
 import Question from "./../Question"
 
 const FillTheGapsTextAnswerSchema = new Schema<IFillTheGapsTextAnswer>({

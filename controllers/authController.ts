@@ -7,7 +7,7 @@ import bcrypt, { compareSync } from "bcrypt"
 import jwt from "jsonwebtoken"
 const { validationResult } = require("express-validator")
 import { Request, Response } from 'express';
-import { IUser } from "../../shared/test";
+import { IUser } from "../types/test";
 
 
 const generateAccessToken = (id: any, roles: any) => {
