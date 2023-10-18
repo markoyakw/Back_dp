@@ -8,7 +8,12 @@ require("dotenv").config()
 import { Document, Model } from 'mongoose';
 import { ITest } from "../types/test";
 const Test = require("../models/Test") as Model<ITest>
+import cors from "cors"
 
+app.use(cors({
+    origin: 'https://yakovenkomarko.netlify.app/',
+    credentials: true
+}))
 const PORT = process.env.PORT || 5000
 const app = express();
 
