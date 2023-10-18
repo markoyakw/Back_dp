@@ -1,7 +1,6 @@
 import { checkActiveTests, checkSetToActivateTests } from './../utils/checkTestsActivation';
 import express from "express";
 import mongoose, { ConnectOptions } from "mongoose"
-import cors from "cors"
 import cookieParser from "cookie-parser"
 import authRouter from "./../routers/authRouter"
 import testsRouter from "./../routers/testsRouter"
@@ -12,11 +11,6 @@ const Test = require("../models/Test") as Model<ITest>
 
 const PORT = process.env.PORT || 5000
 const app = express();
-
-app.use(cors({
-    origin: 'http://localhost:3000',
-    credentials: true
-}))
 
 app.use(express.json())
 app.use(cookieParser())
