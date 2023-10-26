@@ -411,19 +411,18 @@ class testsController {
                 if (!wrongQuestionsTagsArr || wrongQuestionsTagsArr.length === 0) return
 
                 const wrongQuestionsTags = wrongQuestionsTagsArr.join(" ")
-                const prompt = `text: ${testResult.theoreticalPart}, questions_tags: ${wrongQuestionsTags}`
                 const response = await axios.post('https://api.openai.com/v1/chat/completions', {
                     model: 'gpt-3.5-turbo-16k',
                     max_tokens: 2048,
                     messages: [
                         {
                             role: 'system',
-                            content: `You have been provided with two pieces of information in Ukrainian: a text representing the theoretical part of a quiz and a list of question tags. 
-                                These question tags correspond to incorrect answers in the quiz. 
-                                Your task is to identify and highlight the relevant sections in the text (it should be exactly present in text, after "text:") to help 
-                                students understand what they should review and memorize again. 
+                            content: `You will be provided with text in Ukrainian from user: a text representing the theoretical part of a quiz.
+                                i will provide tags that you should search for in given text and highlight the text parts, that fully logically describes given tags. 
+                                Highlighted text parts should be symbol to symbol as in text and you should not return generated parts or parts of tags
+                                here are the tags : "${wrongQuestionsTags}" 
                                 Your response should be a valid JSON array named "highlightedWrongPartsArr" within an object. This array should contain exact highlighted strings 
-                                from the text that correspond to the provided question tags. 
+                                from the text given by user. 
                                 If you cannot find any correlations between the text and the question tags or if the text is not suitable for highlighting, 
                                 the returned array should be empty. Please ensure that the response is in the specified JSON format.
                                 Example Response:
@@ -434,7 +433,7 @@ class testsController {
                         },
                         {
                             role: 'user',
-                            content: prompt,
+                            content: testResult.theoreticalPart,
                         },
                     ],
                 }, {
