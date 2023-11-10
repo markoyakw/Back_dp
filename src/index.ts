@@ -14,7 +14,7 @@ import cors from "cors"
 const PORT = process.env.PORT || 5000
 const app = express();
 app.use(cors({
-    origin: 'https://yakovenkodiploma.vercel.app/:1',
+    origin: 'https://yakovenkodiploma.vercel.app',
     credentials: true
 }))
 app.use(express.json())
