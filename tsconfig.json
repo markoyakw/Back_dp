@@ -8,7 +8,7 @@
         "noImplicitAny": true
     },
     "include": [
-        "src/**/*"
+        "**/*"
     ],
     "paths": {
         "@/*": [
