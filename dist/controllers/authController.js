@@ -68,6 +68,12 @@ class AuthController {
     async check(req, res) {
         try {
             const user = await User.findOne({ id: req.user })
+                // .populate({
+                //     path: 'testResultsById',
+                //     populate: {
+                //         path: 'testResultsById.question',
+                //     },
+                // })
                 .populate({
                 path: 'tests',
                 populate: {

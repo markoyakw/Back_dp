@@ -6,16 +6,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const checkTestsActivation_1 = require("./../utils/checkTestsActivation");
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const authRouter_1 = __importDefault(require("./../routers/authRouter"));
 const testsRouter_1 = __importDefault(require("./../routers/testsRouter"));
 require("dotenv").config();
 const Test = require("../models/Test");
+const cors_1 = __importDefault(require("cors"));
 const PORT = process.env.PORT || 5000;
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
-    origin: 'http://localhost:3000',
+    origin: 'https://yakovenkodiploma.vercel.app',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true
 }));
 app.use(express_1.default.json());
