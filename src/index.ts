@@ -24,7 +24,7 @@ app.use(cookieParser())
 app.use("/auth", authRouter)
 app.use("/tests", testsRouter)
 
-app.get('/test', (req, res) => {
+app.get('/testApp', (req, res) => {
     res.json({ message: "i exist" });
 });
 
