@@ -1,9 +1,9 @@
-import { checkActiveTests, checkSetToActivateTests } from './utils/checkTestsActivation';
+import { checkActiveTests, checkSetToActivateTests } from '../utils/checkTestsActivation';
 import express from "express";
 import mongoose, { ConnectOptions } from "mongoose"
 import cookieParser from "cookie-parser"
-import authRouter from "./routers/authRouter"
-import testsRouter from "./routers/testsRouter"
+import authRouter from "../routers/authRouter"
+import testsRouter from "../routers/testsRouter"
 import dotenv from "dotenv"
 import cors from "cors"
 

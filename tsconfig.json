@@ -2,14 +2,13 @@
     "compilerOptions": {
         "module": "NodeNext",
         "moduleResolution": "NodeNext",
-        "baseUrl": "./",
-        "outDir": "./api",
+        "baseUrl": "src",
+        "outDir": "dist",
         "sourceMap": true,
         "noImplicitAny": true
     },
     "include": [
-        "src/**/*",
-        "index.ts"
+        "src/**/*"
     ],
     "paths": {
         "@/*": [

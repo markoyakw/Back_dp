@@ -1,21 +1,14 @@
 {
-  "name": "wordle-backend",
+  "name": "be",
   "version": "1.0.0",
-  "description": "TypeScript Rest API with Express.js, JWT, MongoDB",
-  "main": "index.ts",
+  "description": "Backend app for my diploma project",
+  "main": "./dist/src/index.js",
   "scripts": {
-    "start": "node ./api/index.js",
-    "build": "tsc",
-    "ts.check": "tsc --project tsconfig.json",
-    "add-build": "git add dist",
+    "start": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon"
+    "build": "tsc"
   },
-  "pre-commit": [
-    "ts.check",
-    "build",
-    "add-build"
-  ],
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
