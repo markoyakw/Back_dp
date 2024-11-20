@@ -25,10 +25,7 @@ app.get("/", (req, res) => res.send("I exist"));
 
 const start = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        } as ConnectOptions)
+        await mongoose.connect(process.env.MONGO_URI)
         mongoose.set('strictQuery', true)
 
         app.listen(PORT, () => console.log(`server started on port ${PORT}`))
