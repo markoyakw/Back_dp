@@ -9,15 +9,15 @@ const ConnectOptionsQuestionSchema = new Schema<IConnectOptionsQuestion>({
             [
                 {
                     answerText: { type: String, required: true },
-                },
+                }
             ],
         ],
         required: true,
         validate: {
             validator: (answersArray: IConnectOptionsAnswerPair[]) => {
-                answersArray.forEach(answersPair => {
-                    return Array.isArray(answersPair) && answersPair.length === 2;
-                });
+                return Array.isArray(answersArray) && answersArray.every(answersPair =>
+                    Array.isArray(answersPair) && answersPair.length === 2
+                );
             },
             message: "The 'answers' array must contain exactly two pairs of answers.",
         },
