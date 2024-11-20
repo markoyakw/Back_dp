@@ -1,13 +1,10 @@
-const User = require("../models/User")
-const Test = require("../models/Test")
-const TestResult = require("../models/TestResult")
-
-import bcrypt, { compareSync } from "bcrypt"
+import User from "../models/User"
+import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-const { validationResult } = require("express-validator")
+import validationResult from "express-validator"
 import { Request, Response } from 'express';
 import { IUser } from "../types/test";
-
+const secretWord = process.env.SECRET_WORD
 
 const generateAccessToken = (id: any, roles: any) => {
     const payload = {
@@ -20,7 +17,7 @@ const generateAccessToken = (id: any, roles: any) => {
 class AuthController {
     public async registration(req: Request, res: Response) {
         try {
-            const errors = validationResult(req)
+            const errors = validationResult.validationResult(req)
             if (!errors.isEmpty()) {
                 return res.status(422).json({ message: "Недопустиме значення одного з полів", errors })
             }
@@ -47,17 +44,11 @@ class AuthController {
             }
             const validPassword = bcrypt.compareSync(password, user.password)
             if (!validPassword) {
-                if (user.wrongPasswordEnteredTimes < 5) {
-                    user.wrongPasswordEnteredTimes++
-                }
-                if (user.wrongPasswordEnteredTimes >= 5) {
-                    user.isBlocked = true
-                }
                 await user.save()
                 return res.status(401).json({ message: "Введено невірний пароль" })
             }
             await user.save()
-            const token = generateAccessToken(user._id, user.roles)
+            const token = generateAccessToken(user._id, secretWord)
             return res.json({ token, message: "Вас успішно авторизовано 🥳" })
         } catch (e) {
             console.log(e)

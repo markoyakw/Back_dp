@@ -1,14 +1,21 @@
 {
-  "name": "be",
+  "name": "wordle-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "TypeScript Rest API with Express.js, JWT, MongoDB",
+  "main": "index.ts",
   "scripts": {
-    "start": "nodemon",
+    "start": "node ./api/index.js",
+    "build": "tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "dev": "nodemon"
   },
-  "keywords": [],
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -36,5 +43,8 @@
     "mongoose": "^7.5.3",
     "netlify": "^13.1.10",
     "openai": "^4.11.0"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }

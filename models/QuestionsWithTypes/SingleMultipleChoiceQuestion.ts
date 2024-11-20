@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import { Schema } from "mongoose";
 import { IsingleMultipleChoiceQuestion, QuestionTypes } from "../../types/test";
 import Question from "./../Question"
 
@@ -10,7 +10,7 @@ const SingleMultipleCHoiceQuestionSchema = new Schema<IsingleMultipleChoiceQuest
         isRight: { type: Boolean },
     }],
 });
-  
-const SingleMultipleChoiceQuestion =  Question.discriminator<IsingleMultipleChoiceQuestion>('SingleMultipleChoiceQuestion', SingleMultipleCHoiceQuestionSchema);
+
+const SingleMultipleChoiceQuestion = Question.discriminator<IsingleMultipleChoiceQuestion>('SingleMultipleChoiceQuestion', SingleMultipleCHoiceQuestionSchema);
 
 export default SingleMultipleChoiceQuestion;

@@ -1,8 +1,8 @@
-import { ITestResult } from './../types/test';
-import { Schema, model } from 'mongoose';
-
-const TestResult = new Schema<ITestResult>({
-    testId: { type: Schema.Types.ObjectId, ref: "Test", required: true },
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = require("mongoose");
+const TestResult = new mongoose_1.Schema({
+    testId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Test", required: true },
     name: { type: String, required: true },
     description: { type: String },
     theoreticalPart: { type: String },
@@ -17,7 +17,7 @@ const TestResult = new Schema<ITestResult>({
                     default: null,
                 }
             },
-            question: { type: Schema.Types.ObjectId, ref: "Question" }
+            question: { type: mongoose_1.Schema.Types.ObjectId, ref: "Question" }
         }
     ],
     passedBy: {
@@ -36,10 +36,9 @@ const TestResult = new Schema<ITestResult>({
     },
     passedAt: Number
 });
-
 TestResult.pre('save', function (next) {
     this.passedAt = Number(Date.now());
     next();
 });
-
-export default model('TestResult', TestResult);
+exports.default = (0, mongoose_1.model)('TestResult', TestResult);
+//# sourceMappingURL=TestResult.js.map

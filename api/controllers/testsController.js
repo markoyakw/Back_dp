@@ -1,50 +1,44 @@
-import { IConnectOptionsQuestion, IFillTheGapsQuestion, IQuestion, ITest, ITestResult, ITextInputQuestion, ITrueOrFalseQuestion, IUser, IsingleMultipleChoiceAnswer, IsingleMultipleChoiceQuestion, QuestionTypes } from '../types/test';
-import User from "../models/User"
-import Test from "../models/Test"
-import TestResult from "../models/TestResult"
-import { Request, Response } from 'express';
-import addQuestionAndGetId from "../utils/addQuestionAndGetId"
-import { activateTest, deactivateTest, setToActivateTest } from '../utils/activateDeactivateTest';
-import axios from "axios"
-
-let activationTimer: NodeJS.Timeout
-let deactivationTimer: NodeJS.Timeout
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const test_1 = require("../types/test");
+const User_1 = __importDefault(require("../models/User"));
+const Test_1 = __importDefault(require("../models/Test"));
+const TestResult_1 = __importDefault(require("../models/TestResult"));
+const addQuestionAndGetId_1 = __importDefault(require("../utils/addQuestionAndGetId"));
+const activateDeactivateTest_1 = require("../utils/activateDeactivateTest");
+const axios_1 = __importDefault(require("axios"));
+let activationTimer;
+let deactivationTimer;
 class testsController {
-    async postTest(req: Request, res: Response) {
+    async postTest(req, res) {
         try {
             const { name, description, questions, theoreticalPart } = req.body;
-
-            const questionIds = await Promise.all(questions.map(async (question: IQuestion) => {
-                return await addQuestionAndGetId(question);
+            const questionIds = await Promise.all(questions.map(async (question) => {
+                return await (0, addQuestionAndGetId_1.default)(question);
             }));
-
-            const newTest = new Test({
+            const newTest = new Test_1.default({
                 name,
                 description,
                 theoreticalPart,
                 questions: questionIds,
                 updatedAt: "1",
-            })
-
-            await newTest.save()
-            const populatedNewTest = await Test.findOne({ _id: newTest._id })
+            });
+            await newTest.save();
+            const populatedNewTest = await Test_1.default.findOne({ _id: newTest._id })
                 .populate({
-                    path: 'questions'
-                })
+                path: 'questions'
+            })
                 .exec();
-
-            const newTestUser = await User.findOne({ _id: req.user.id })
-
+            const newTestUser = await User_1.default.findOne({ _id: req.user.id });
             await newTestUser.updateOne({
                 $push: { tests: newTest },
             });
-
             await newTestUser.updateOne({
-                $push:
-                {
-                    testResultsById:
-                    {
+                $push: {
+                    testResultsById: {
                         ref: newTest._id,
                         name: newTest.name,
                         description: newTest.description,
@@ -52,24 +46,20 @@ class testsController {
                     }
                 }
             });
-
-            await newTestUser.save()
-
+            await newTestUser.save();
             res.json({ message: "Тест успішно створено 😎", newTest: populatedNewTest });
-
-        } catch (e) {
+        }
+        catch (e) {
             console.log(e);
             res.status(400).json({ message: "Помилка створення тесту. Спробуйте ще раз." });
         }
     }
-    async generateQuestions(req: Request, res: Response) {
+    async generateQuestions(req, res) {
         try {
-            const { theoreticalPart }: { theoreticalPart: string } = req.body;
-
+            const { theoreticalPart } = req.body;
             const prompt = `use given text to generate 5 quizzes in given format
-            ${theoreticalPart}`
-
-            const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+            ${theoreticalPart}`;
+            const response = await axios_1.default.post('https://api.openai.com/v1/chat/completions', {
                 model: 'gpt-3.5-turbo-16k',
                 max_tokens: 2048,
                 messages: [
@@ -96,85 +86,75 @@ class testsController {
                     'Authorization': `Bearer ${process.env.GPT_API_KEY}`,
                 },
             });
-
             if (response.data.error) {
                 return res.status(400).json({ message: response.data.error.message });
             }
-
-            res.json({ questions: JSON.parse(response["data"]["choices"][0]["message"]["content"]) })
-        } catch (e) {
+            res.json({ questions: JSON.parse(response["data"]["choices"][0]["message"]["content"]) });
+        }
+        catch (e) {
             console.log(e);
             res.status(400).json({ message: "Помилка генерації запитань. Спробуйте ще раз." });
         }
     }
-    async deleteTest(req: Request, res: Response) {
+    async deleteTest(req, res) {
         try {
-            const user = await User.findOne({ _id: req.user.id })
-            await user.updateOne({ $pull: { tests: req.query.id } })
-            await Test.deleteOne({ _id: req.query.id })
-            res.json({ message: "Тест успішно видалено", deletedTestId: req.query.id })
-        } catch (e) {
-            console.log(e)
-            res.status(400).json({ message: "Помилка видалення тесту" })
+            const user = await User_1.default.findOne({ _id: req.user.id });
+            await user.updateOne({ $pull: { tests: req.query.id } });
+            await Test_1.default.deleteOne({ _id: req.query.id });
+            res.json({ message: "Тест успішно видалено", deletedTestId: req.query.id });
+        }
+        catch (e) {
+            console.log(e);
+            res.status(400).json({ message: "Помилка видалення тесту" });
         }
     }
-    async editTest(req: Request, res: Response) {
+    async editTest(req, res) {
         try {
-            const { test: editedTest }: { test: ITest } = req.body
-            const test = await Test.findOne({ _id: editedTest._id })
-            const questionIds = await Promise.all(editedTest.questions.map(async (question: IQuestion) => {
-                return await addQuestionAndGetId(question);
+            const { test: editedTest } = req.body;
+            const test = await Test_1.default.findOne({ _id: editedTest._id });
+            const questionIds = await Promise.all(editedTest.questions.map(async (question) => {
+                return await (0, addQuestionAndGetId_1.default)(question);
             }));
-
             await test.updateOne({
                 questions: questionIds,
                 name: editedTest.name,
                 description: editedTest.description,
                 theoreticalPart: editedTest.theoreticalPart,
                 updatedAt: Date.now()
-            })
-
-            await test.save()
+            });
+            await test.save();
             res.json({ message: "Тест успішно редаговано", editedTest: test });
-        } catch (e) {
+        }
+        catch (e) {
             console.log(e);
             res.status(400).json({ message: "Помилка редагування тесту" });
         }
     }
-    async activateTest(req: Request, res: Response) {
+    async activateTest(req, res) {
         try {
-            const { activatingTestId: _id, endTime, ...other } = req.body
-            const startTime = other.startTime === "now" ? Date.now() : other.startTime
-            const test = await Test.findOne({ _id })
-
+            const { activatingTestId: _id, endTime, ...other } = req.body;
+            const startTime = other.startTime === "now" ? Date.now() : other.startTime;
+            const test = await Test_1.default.findOne({ _id });
             if (test.isActive) {
-                return res.status(400).json({ message: "Обраний тест вже активний" })
+                return res.status(400).json({ message: "Обраний тест вже активний" });
             }
-
             const populatedTest = await test.populate({ path: '', select: '-__v', strictPopulate: false });
-            await setToActivateTest(populatedTest, startTime, endTime)
-
+            await (0, activateDeactivateTest_1.setToActivateTest)(populatedTest, startTime, endTime);
             const currentTime = Number(new Date());
             const timeUntilActivation = startTime - currentTime;
             const timeUntilDeactivation = endTime - currentTime;
-
             if (await other.startTime === "now") {
-                await activateTest(populatedTest)
+                await (0, activateDeactivateTest_1.activateTest)(populatedTest);
             }
-
             else {
                 activationTimer = setTimeout(async () => {
-                    await activateTest(populatedTest)
-                }, timeUntilActivation)
+                    await (0, activateDeactivateTest_1.activateTest)(populatedTest);
+                }, timeUntilActivation);
             }
-
             deactivationTimer = setTimeout(async () => {
-                await deactivateTest(populatedTest)
+                await (0, activateDeactivateTest_1.deactivateTest)(populatedTest);
             }, timeUntilDeactivation);
-
-
-            const newTestUser = await User.findOne({ _id: req.user.id });
-
+            const newTestUser = await User_1.default.findOne({ _id: req.user.id });
             const update = {
                 $addToSet: {
                     testResultsById: {
@@ -186,230 +166,221 @@ class testsController {
                 },
             };
             await newTestUser.updateOne(update);
-
             res.json({
                 message: "Інформація про час активації збережена, очікуйте початок тестування ✨",
                 activatedTest: populatedTest,
             });
-
-        } catch (e) {
+        }
+        catch (e) {
             console.error(e);
             res.status(400).json({ message: "Помилка активації тесту" });
         }
     }
-    async deactivateTest(req: Request, res: Response) {
+    async deactivateTest(req, res) {
         try {
             const { deactivatingTestId: _id } = req.body;
-            const test = await Test.findOne({ _id })
-
+            const test = await Test_1.default.findOne({ _id });
             if (test.isActive === false) {
                 return res.status(400).json({ message: "Обраний тест не активний" });
             }
-
             const populatedTest = await test.populate({ path: '', select: '-__v', strictPopulate: false });
-
-            await deactivateTest(populatedTest)
-
+            await (0, activateDeactivateTest_1.deactivateTest)(populatedTest);
             clearTimeout(activationTimer);
             clearTimeout(deactivationTimer);
-
-
             res.json({
                 message: "Тестування успішно завершено ✨",
                 deactivatedTest: populatedTest,
             });
-
-        } catch (e) {
+        }
+        catch (e) {
             console.error(e);
             res.status(400).json({ message: "Помилка деактивації тесту" });
         }
     }
-    async getTested(req: Request, res: Response) {
+    async getTested(req, res) {
         try {
-            const id = req.query.id
-            const test = await Test.findOne({ _id: id })
-
+            const id = req.query.id;
+            const test = await Test_1.default.findOne({ _id: id });
             const populatedTest = await test.populate({ path: 'questions', select: '-__v', strictPopulate: false });
-
             if (populatedTest.isActive) {
-                res.json({ test: populatedTest, message: "Тест успішно знайдено, вдалого тестування 😎" })
+                res.json({ test: populatedTest, message: "Тест успішно знайдено, вдалого тестування 😎" });
             }
             else {
                 res.status(404).json({ message: "Цей тест наразі не активний 😴. зв'яжіться з автором для початку тестування." });
             }
-        } catch (e) {
+        }
+        catch (e) {
             console.error(e);
             res.status(400).json({ message: "Помилка пошуку тесту" });
         }
     }
-    async postTestResult(req: Request, res: Response) {
+    async postTestResult(req, res) {
         try {
-            const { testResult } = req.body as { testResult: ITest }
-            const passedBy = await User.findOne({ _id: req.user.id })
-            const correctTest = await Test.findOne({ _id: testResult._id }).populate({ path: 'questions', select: '-__v', strictPopulate: false })
-            const correctQuestions = correctTest.questions
-            let essayCounter = 0
-
-            const gradeQuestion = (question: IQuestion, questionId: number) => {
+            const { testResult } = req.body;
+            const passedBy = await User_1.default.findOne({ _id: req.user.id });
+            const correctTest = await Test_1.default.findOne({ _id: testResult._id }).populate({ path: 'questions', select: '-__v', strictPopulate: false });
+            const correctQuestions = correctTest.questions;
+            let essayCounter = 0;
+            const gradeQuestion = (question, questionId) => {
                 switch (question.type) {
-                    case QuestionTypes.singleMultipleChoice: {
-                        const correctQuestion = correctQuestions[questionId] as IsingleMultipleChoiceQuestion
+                    case test_1.QuestionTypes.singleMultipleChoice: {
+                        const correctQuestion = correctQuestions[questionId];
                         const answerIsRightArr = question.answers.map((answer, answerId) => {
                             if (answer.isRight && correctQuestion.answers[answerId].isRight) {
-                                return true
+                                return true;
                             }
                             if (!correctQuestion.answers[answerId].isRight && !answer.isRight) {
-                                return null
+                                return null;
                             }
-                            else return false
-                        })
-                        let questionIsRight = answerIsRightArr.every(isRight => isRight === true || isRight === null) || answerIsRightArr.every(isRight => isRight === null)
-                        return { answerIsRightArr, questionIsRight }
+                            else
+                                return false;
+                        });
+                        let questionIsRight = answerIsRightArr.every(isRight => isRight === true || isRight === null) || answerIsRightArr.every(isRight => isRight === null);
+                        return { answerIsRightArr, questionIsRight };
                     }
-                    case QuestionTypes.fillTheGaps: {
-                        const correctQuestion = correctQuestions[questionId] as IFillTheGapsQuestion
+                    case test_1.QuestionTypes.fillTheGaps: {
+                        const correctQuestion = correctQuestions[questionId];
                         const gradedQuestion = question.answers.map((answer, answerId) => {
-                            if (answer.type !== "fill") return null
+                            if (answer.type !== "fill")
+                                return null;
                             if (answer.answerText.toLowerCase() === correctQuestion.answers[answerId].answerText.toLowerCase()) {
-                                return true
+                                return true;
                             }
-                            else return false
-                        })
-                        const answerIsRightArr = gradedQuestion.filter(item => item !== undefined)
-                        const questionIsRight = answerIsRightArr.every(answer => answer === true || answer === null)
-
-                        return { answerIsRightArr, questionIsRight }
+                            else
+                                return false;
+                        });
+                        const answerIsRightArr = gradedQuestion.filter(item => item !== undefined);
+                        const questionIsRight = answerIsRightArr.every(answer => answer === true || answer === null);
+                        return { answerIsRightArr, questionIsRight };
                     }
-                    case QuestionTypes.connectOptions: {
-                        const connectOptionsQuestion = question as IConnectOptionsQuestion;
-                        let questionIsRight = true
+                    case test_1.QuestionTypes.connectOptions: {
+                        const connectOptionsQuestion = question;
+                        let questionIsRight = true;
                         const answerIsRightArr = question.answers.map((answerPair, answerPairId) => {
-                            if (!connectOptionsQuestion.chosenAnswers[answerPairId]) return false
+                            if (!connectOptionsQuestion.chosenAnswers[answerPairId])
+                                return false;
                             if (answerPair[1].answerText === connectOptionsQuestion.chosenAnswers[answerPairId].answerText) {
-                                return true
+                                return true;
                             }
-                            else return false
-                        })
+                            else
+                                return false;
+                        });
                         answerIsRightArr.forEach(answerIsRight => {
                             if (!answerIsRight) {
-                                questionIsRight = false
+                                questionIsRight = false;
                             }
-                        })
-
-                        return { answerIsRightArr, questionIsRight }
+                        });
+                        return { answerIsRightArr, questionIsRight };
                     }
-                    case QuestionTypes.textInput: {
-                        const textInputQuestion = question as ITextInputQuestion
-                        let questionIsRight = false
+                    case test_1.QuestionTypes.textInput: {
+                        const textInputQuestion = question;
+                        let questionIsRight = false;
                         textInputQuestion.answers.forEach(answer => {
                             if (answer.answerText.toLowerCase() === textInputQuestion.answer.toLowerCase()) {
-                                questionIsRight = true
+                                questionIsRight = true;
                             }
-                        })
-                        return { questionIsRight }
+                        });
+                        return { questionIsRight };
                     }
-                    case QuestionTypes.trueOrFalse: {
-                        const correctQuestion = correctQuestions[questionId] as ITrueOrFalseQuestion
-                        let questionIsRight
+                    case test_1.QuestionTypes.trueOrFalse: {
+                        const correctQuestion = correctQuestions[questionId];
+                        let questionIsRight;
                         if (question.answer === correctQuestion.answer) {
-                            questionIsRight = true
+                            questionIsRight = true;
                         }
-                        else questionIsRight = false
-                        return { questionIsRight }
+                        else
+                            questionIsRight = false;
+                        return { questionIsRight };
                     }
-                    case QuestionTypes.essay: {
-                        essayCounter++
-                        return { questionIsRight: null }
+                    case test_1.QuestionTypes.essay: {
+                        essayCounter++;
+                        return { questionIsRight: null };
                     }
                 }
-            }
+            };
             const questionGrades = await Promise.all(testResult.questions.map(async (questionResult, questionResultId) => {
-                const questionId = await addQuestionAndGetId(questionResult);
+                const questionId = await (0, addQuestionAndGetId_1.default)(questionResult);
                 const questionGrade = gradeQuestion(questionResult, questionResultId);
-
                 return {
                     questionGrade,
                     question: questionId,
                 };
             }));
-
             const gradeTest = () => {
-                let numberGrade = 0
-                const maxGrade = questionGrades.length - essayCounter
-
+                let numberGrade = 0;
+                const maxGrade = questionGrades.length - essayCounter;
                 const getNumberGrade = () => {
                     questionGrades.forEach(questionGrade => {
                         if (questionGrade.questionGrade.questionIsRight) {
-                            numberGrade++
+                            numberGrade++;
                         }
-                    })
+                    });
                     const getEssayCounterString = () => {
-                        if (essayCounter) return " + " + essayCounter + " неоцінених есе"
-                        else return ""
-                    }
+                        if (essayCounter)
+                            return " + " + essayCounter + " неоцінених есе";
+                        else
+                            return "";
+                    };
                     return ({
                         value: numberGrade,
                         label: numberGrade + "/" + maxGrade + getEssayCounterString()
-                    })
-                }
-
+                    });
+                };
                 const getPercentageGrade = () => {
-                    const percentageGrade = numberGrade / maxGrade * 100
+                    const percentageGrade = numberGrade / maxGrade * 100;
                     return ({
                         value: percentageGrade,
                         label: percentageGrade + "%"
-                    })
-                }
-
+                    });
+                };
                 return {
                     numberGrade: getNumberGrade(),
                     percentageGrade: getPercentageGrade()
-                }
-            }
-
-            const getKeywordsFromQuestion = (question: IQuestion) => {
+                };
+            };
+            const getKeywordsFromQuestion = (question) => {
                 switch (question.type) {
-                    case QuestionTypes.connectOptions:
-                        let connectOptionstext = ""
-                        question.answers[0].forEach(answer => connectOptionstext = connectOptionstext + answer.answerText + " ")
-                        return connectOptionstext
-                    case QuestionTypes.fillTheGaps:
-                        let fillTheGapstext = ""
+                    case test_1.QuestionTypes.connectOptions:
+                        let connectOptionstext = "";
+                        question.answers[0].forEach(answer => connectOptionstext = connectOptionstext + answer.answerText + " ");
+                        return connectOptionstext;
+                    case test_1.QuestionTypes.fillTheGaps:
+                        let fillTheGapstext = "";
                         question.answers.forEach(answer => {
                             if (answer.type === "text") {
-                                fillTheGapstext = fillTheGapstext + answer.answerText + " "
+                                fillTheGapstext = fillTheGapstext + answer.answerText + " ";
                             }
-                        })
-                        return fillTheGapstext
-                    case QuestionTypes.singleMultipleChoice:
-                        let singleMultipleChoicetext = question.question
-                        question.answers.forEach(answer => singleMultipleChoicetext = singleMultipleChoicetext + answer.answerText + " ")
-                        return singleMultipleChoicetext
-                    case QuestionTypes.textInput:
-                        let textInputtext = " "
-                        question.answers.forEach(answer => singleMultipleChoicetext = singleMultipleChoicetext + answer.answerText + " ")
-                        return textInputtext
-                    case QuestionTypes.trueOrFalse:
-                        let trueOrFalsetext = question.question
-                        return trueOrFalsetext
+                        });
+                        return fillTheGapstext;
+                    case test_1.QuestionTypes.singleMultipleChoice:
+                        let singleMultipleChoicetext = question.question;
+                        question.answers.forEach(answer => singleMultipleChoicetext = singleMultipleChoicetext + answer.answerText + " ");
+                        return singleMultipleChoicetext;
+                    case test_1.QuestionTypes.textInput:
+                        let textInputtext = " ";
+                        question.answers.forEach(answer => singleMultipleChoicetext = singleMultipleChoicetext + answer.answerText + " ");
+                        return textInputtext;
+                    case test_1.QuestionTypes.trueOrFalse:
+                        let trueOrFalsetext = question.question;
+                        return trueOrFalsetext;
                     default:
-                        return ""
+                        return "";
                 }
-            }
-
+            };
             const highlightWrongParts = async () => {
-                if (!testResult.theoreticalPart) return null
+                if (!testResult.theoreticalPart)
+                    return null;
                 const wrongQuestionsTagsArr = questionGrades.map((grade, gradeId) => {
                     if (grade.questionGrade.questionIsRight === false) {
-                        return getKeywordsFromQuestion(testResult.questions[gradeId])
+                        return getKeywordsFromQuestion(testResult.questions[gradeId]);
                     }
-                    else return
-                })
-
-                if (!wrongQuestionsTagsArr || wrongQuestionsTagsArr.length === 0) return
-
-                const wrongQuestionsTags = wrongQuestionsTagsArr.join(" ")
-                const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+                    else
+                        return;
+                });
+                if (!wrongQuestionsTagsArr || wrongQuestionsTagsArr.length === 0)
+                    return;
+                const wrongQuestionsTags = wrongQuestionsTagsArr.join(" ");
+                const response = await axios_1.default.post('https://api.openai.com/v1/chat/completions', {
                     model: 'gpt-3.5-turbo-16k',
                     max_tokens: 2048,
                     messages: [
@@ -426,8 +397,7 @@ class testsController {
                                 Example Response:
                                 {
                                   "highlightedWrongPartsArr": ["Highlighted text 1", "Highlighted text 2"]
-                                }`
-                            ,
+                                }`,
                         },
                         {
                             role: 'user',
@@ -439,16 +409,14 @@ class testsController {
                         'Authorization': `Bearer ${process.env.GPT_API_KEY}`,
                     },
                 });
-
                 if (response.data.error) {
-                    console.log(response.data.error)
+                    console.log(response.data.error);
                     return res.status(400).json({ message: response.data.error.message });
                 }
-                return JSON.parse(response["data"]["choices"][0]["message"]["content"])
-            }
-
-            const highlightedWrongPartsArr = await highlightWrongParts()
-            const gradedTestResult = new TestResult({
+                return JSON.parse(response["data"]["choices"][0]["message"]["content"]);
+            };
+            const highlightedWrongPartsArr = await highlightWrongParts();
+            const gradedTestResult = new TestResult_1.default({
                 testId: testResult._id,
                 name: testResult.name,
                 description: testResult.description,
@@ -462,41 +430,41 @@ class testsController {
                     username: passedBy.username
                 }
             });
-
             await gradedTestResult.save();
-            return res.json({ gradedTestResult, message: "Тест вдало відправлено на перевірку 😎", highlightedWrongPartsArr })
-        } catch (e) {
+            return res.json({ gradedTestResult, message: "Тест вдало відправлено на перевірку 😎", highlightedWrongPartsArr });
+        }
+        catch (e) {
             console.error(e);
             res.status(400).json({ message: "Помилка оцінювання тесту" });
         }
     }
-    async testResultsByTestId(req: Request, res: Response) {
+    async testResultsByTestId(req, res) {
         try {
-            const id = req.query.id
-            const testResults = await TestResult.find({ testId: id })
+            const id = req.query.id;
+            const testResults = await TestResult_1.default.find({ testId: id })
                 .populate({
-                    path: 'questionGrades',
+                path: 'questionGrades',
+                populate: {
+                    path: 'question',
                     populate: {
-                        path: 'question',
-                        populate: {
-                            path: 'answer',
-                        },
+                        path: 'answer',
                     },
-                })
-                .exec()
+                },
+            })
+                .exec();
             if (testResults) {
-                return res.json({ testResults, testId: id })
+                return res.json({ testResults, testId: id });
             }
             res.status(404).json({ message: "Результатів цього тесту немає" });
-        } catch (e) {
+        }
+        catch (e) {
             console.error(e);
             res.status(400).json({ message: "Помилка пошуку результату тесту" });
         }
     }
-    async check(req: Request, res: Response) {
-        return res.json({ test: "ok" })
+    async check(req, res) {
+        return res.json({ test: "ok" });
     }
-
 }
-
-export default new testsController()
+exports.default = new testsController();
+//# sourceMappingURL=testsController.js.map

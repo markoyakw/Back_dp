@@ -1,16 +1,13 @@
-import { checkActiveTests, checkSetToActivateTests } from './../utils/checkTestsActivation';
+import { checkActiveTests, checkSetToActivateTests } from './utils/checkTestsActivation';
 import express from "express";
 import mongoose, { ConnectOptions } from "mongoose"
 import cookieParser from "cookie-parser"
-import authRouter from "./../routers/authRouter"
-import testsRouter from "./../routers/testsRouter"
-require("dotenv").config()
-import { Document, Model } from 'mongoose';
-import { ITest } from "../types/test";
-const Test = require("../models/Test") as Model<ITest>
+import authRouter from "./routers/authRouter"
+import testsRouter from "./routers/testsRouter"
+import dotenv from "dotenv"
 import cors from "cors"
 
-
+dotenv.config()
 const PORT = process.env.PORT || 5000
 const app = express();
 app.use(cors({
@@ -24,9 +21,7 @@ app.use(cookieParser())
 app.use("/auth", authRouter)
 app.use("/tests", testsRouter)
 
-app.get('/testApp', (req, res) => {
-    res.json({ message: "i exist" });
-});
+app.get("/", (req, res) => res.send("I exist"));
 
 const start = async () => {
     try {

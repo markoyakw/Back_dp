@@ -1,5 +1,5 @@
-const Router = require("express")
-const testsRouter = new Router()
+import { Router } from "express"
+const testsRouter = Router()
 import testsController from "../controllers/testsController"
 import authMiddleware from "../middleware/authMiddleware"
 

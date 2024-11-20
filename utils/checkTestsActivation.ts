@@ -1,7 +1,5 @@
 import { activateTest, deactivateTest } from './activateDeactivateTest';
-import { Document, Model } from "mongoose";
-import { ITest } from "../types/test";
-const Test = require("../models/Test") as Model<ITest>
+import Test from "../models/Test"
 
 const now = Date.now()
 
@@ -19,7 +17,7 @@ export const checkActiveTests = async () => {
         if (activeTest.deactivateAt && activeTest.deactivateAt <= now) {
             deactivateTest(activeTest)
         }
-        else if (activeTest.deactivateAt && activeTest.activateAt && activeTest.deactivateAt > now ) {
+        else if (activeTest.deactivateAt && activeTest.activateAt && activeTest.deactivateAt > now) {
             const deactivateTime = activeTest.deactivateAt - now
             activationTimer = setTimeout(async () => {
                 deactivateTest(activeTest)

@@ -12,8 +12,8 @@ const User = new Schema<IUser>({
         name: { type: String, required: true },
         description: { type: String },
         createdAt: { type: Number, required: true },
-        testResults: [{type: Schema.Types.ObjectId, ref: "TestResult"}]
+        testResults: [{ type: Schema.Types.ObjectId, ref: "TestResult" }]
     }],
 })
 
-module.exports = model("User", User)
+export default model("User", User)
